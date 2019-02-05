@@ -212,11 +212,11 @@ print( round( MutMat, 2 ) )          # As reported in Fig 1b, p. 53
 print( diag( round( resVar, 2 ) ) ) 
 
 
-# ------------------------------ OpenMx Mutualism Matrix
+# ------------------------------ Results
 
 # Model fitting results
-print( summary( Fit ) )  # -2loglikelihood: 61.19469; chi-square:  ??² ( df=9 ) = 2.820073,  p = 0.9710031
-summary( MutFit )        # -2loglikelihood: 61.19475 
+print( summary( Fit ) )    # -2loglikelihood: 61.195; chi-square ( df=9 ) = 2.82,  p = 0.97
+print( summary( MutFit ) ) # -2loglikelihood: 61.195 
 
 # print correlation matrices
 print( C )    # 1-factor model implied 
