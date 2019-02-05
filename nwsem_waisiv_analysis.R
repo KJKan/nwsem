@@ -338,4 +338,96 @@ fits    <- rbind( extrFitStats( SatRes  ),
                   extrFitStats( NWRes   ) )
 
 # Print
-print( fits )                                
+print( fits )          
+
+
+# ------------------------------ Extension, The Network as Mutualism Matrix
+
+# Model implied correlation matrix
+C  <- mxEval( ExpCor, NWFit ) 
+dimnames( C ) <- list( varnames, varnames )
+
+# The matrix as OpenMx object
+# Make sure the correlation matrix is regarded as symmetric  
+ExpData <- mxData( ( C + t( C ) )/2 , type = 'cov', numObs = n  )
+
+# Mutualism matrix M, symmetrical, free ( except diagonal, which contains zeroes )
+M       <- mxMatrix( name = 'M', 
+                     type = 'Symm', 
+                     nrow = ny, 
+                     free = !diag( ny ), 
+                     values = 0 )
+
+# Residual variances 
+Psi_mut <- mxMatrix( name = 'Ps', 
+                     type = 'Diag', 
+                     nrow = ny, 
+                     free = TRUE, 
+                     values = .1, 
+                     ubound =  1 )
+
+# Expected covariance matrix
+ExpCov_mut   <- mxAlgebra( name = 'S',   expression = solve( I - M ) %*% Ps %*% t( solve( I - M ) ) )
+
+# Diagonal matrix containing the standard devations
+SD       <- mxAlgebra( name = 'SD',  expression = sqrt( I * S ) )
+
+# Inverse of that  matrix
+invSD    <- mxAlgebra( name = 'iSD', expression = solve( SD ) )
+
+# Standardized mutualism weights 
+st_M         <- mxAlgebra( name = 'st_M', expression = iSD %*% M %*% SD ) 
+
+# Standardized residual variances
+st_Psi       <- mxAlgebra( name ='st_Ps', iSD %*% Ps %*% t( iSD ) )
+
+# Expected correlation matrix
+ExpCor <- mxAlgebra( name = 'ExpCor',
+                     expression = iSD %*% S %*% t( iSD) )
+
+# The complete model
+MutModel <- mxModel( name = 'Mutualism Model',
+                     ExpData,
+                     M,
+                     Psi_mut,
+                     ExpCov_mut,
+                     I,
+                     SD,
+                     invSD,
+                     st_M,
+                     st_Psi,
+                     ExpCor,
+                     mxExpectationNormal( covariance = 'S',
+                                          dimnames = varnames ),
+                     mxFitFunctionML() )
+
+# Fit the mutualism model
+MutFit <- mxTryHardWideSearch( MutModel )
+
+# Standardized mutualism matrix
+MutMat <- mxEval( st_M, MutFit )
+dimnames( MutMat ) <- dimnames( C )
+
+# Standardized residual variances
+resVar <- mxEval( st_Ps, MutFit )
+
+# Model implied correlation matrix
+Cmut  <- mxEval( ExpCor, MutFit ) 
+dimnames( Cmut ) <- list( varnames, varnames )
+
+# Print standardized matrices
+print( round( MutMat, 2 ) )          
+print( diag( round( resVar, 2 ) ) ) 
+
+# Model fitting results
+print( summary( NWFit ) )   
+print( summary( MutFit ) ) 
+
+# print correlation matrices
+print( C )    # network model implied 
+print( Cmut ) # mutualism model implied
+
+# plot
+qgraph( MutMat, layout = 'spring' )
+
+
