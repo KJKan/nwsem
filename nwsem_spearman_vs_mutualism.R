@@ -211,6 +211,10 @@ dimnames( Cmut ) <- list( varnames, varnames )
 print( round( MutMat, 2 ) )          # As reported in Fig 1b, p. 53
 print( diag( round( resVar, 2 ) ) ) 
 
+# Plot
+qgraph( MutMat, layout = 'spring' )
+
+
 
 # ------------------------------ Results
 
