@@ -1,1 +1,15 @@
-Coming
+###################################################################
+#                                                                 #
+#      Kan, K. J., van der Maas, L. J. & Levine, S. Z. (2019).    #
+#           Extending psychometric network analysis:              #
+#      Empirical evidence against g in favor of mutualism?        #
+#                   Intelligence, 73, 52-62.                      #
+#          https://doi.org/10.1016/j.intell.2018.12.004           #
+#                                                                 #
+#     The R scripts (re-)analyze three independent data sets:     #
+#                                                                 #
+#      - the WAIS IV (2008) correlation matrix                    #
+#      - the Holzinger and Swineford (1939) data set              #
+#      - cognitive performance measures of the MIDUS              # 
+#                                                                 #
+###################################################################
